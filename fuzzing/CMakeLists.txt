@@ -1,13 +1,17 @@
 # License: Boost 1.0
 # By Paul Dreik 2020
 
-add_executable(fuzz_TestSpecParser fuzz_TestSpecParser.cpp)
-target_link_libraries(fuzz_TestSpecParser PRIVATE Catch2::Catch2)
-
-add_executable(fuzz_XmlWriter fuzz_XmlWriter.cpp)
-target_link_libraries(fuzz_XmlWriter PRIVATE Catch2::Catch2)
+# add a library that brings in the main() function from libfuzzer
+# and has all the dependencies, so the individual fuzzers can be
+# added one line each.
+add_library(fuzzhelper NullOStream.h NullOStream.cpp)
+target_link_libraries(fuzzhelper PUBLIC Catch2::Catch2)
 
 # This should be possible to set from the outside to be oss-fuzz compatible,
-# fix later. For now, be libFuzzer only.
-target_link_options(fuzz_TestSpecParser PRIVATE "-fsanitize=fuzzer")
-target_link_options(fuzz_XmlWriter PRIVATE "-fsanitize=fuzzer")
+# fix later. For now, target libFuzzer only.
+target_link_options(fuzzhelper PUBLIC "-fsanitize=fuzzer")
+
+foreach(fuzzer TestSpecParser XmlWriter)
+add_executable(fuzz_${fuzzer} fuzz_${fuzzer}.cpp)
+target_link_libraries(fuzz_${fuzzer} PRIVATE fuzzhelper)
+endforeach()

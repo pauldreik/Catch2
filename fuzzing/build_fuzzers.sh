@@ -12,8 +12,14 @@ BUILDDIR=$CATCHROOT/build-fuzzers
 mkdir -p $BUILDDIR
 cd $BUILDDIR
 
+if which /usr/lib/ccache/clang++ >/dev/null 2>&1 ; then
+ CXX=/usr/lib/ccache/clang++
+else
+ CXX=clang++
+fi
+
 cmake $CATCHROOT \
-  -DCMAKE_CXX_COMPILER=clang++ \
+  -DCMAKE_CXX_COMPILER=$CXX \
   -DCMAKE_CXX_FLAGS="-fsanitize=fuzzer-no-link,address,undefined -O3 -g" \
   -DCATCH_DEVELOPMENT_BUILD=On \
   -DCATCH_BUILD_EXAMPLES=Off \
