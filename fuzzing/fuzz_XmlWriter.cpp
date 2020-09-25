@@ -1,7 +1,7 @@
 //License: Boost 1.0
 //By Paul Dreik 2020
 
-#include "internal/catch_xmlwriter.hpp"
+#include "catch2/internal/catch_xmlwriter.hpp"
 
 #include <iostream>
 
